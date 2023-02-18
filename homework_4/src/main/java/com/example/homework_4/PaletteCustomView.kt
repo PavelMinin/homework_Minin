@@ -2,11 +2,10 @@ package com.example.homework_4
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
+import kotlin.random.Random
 
 class PaletteCustomView @JvmOverloads constructor(
     context: Context,
@@ -25,6 +24,13 @@ class PaletteCustomView @JvmOverloads constructor(
 
     private val paletteColors: List<Int>
 
+    private val borderColor: Int
+
+    private var selectedColor: Int? = null
+
+    val paletteSelectedColor: Int?
+        get() = selectedColor
+
     init {
 
         isClickable = true
@@ -41,6 +47,9 @@ class PaletteCustomView @JvmOverloads constructor(
             typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor7, 0),
             typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor8, 0)
         )
+        borderColor = typedArray.getColor(
+            R.styleable.PaletteCustomViewView_selectedBorderColor, 0)
+
         typedArray.recycle()
     }
 
@@ -51,6 +60,8 @@ class PaletteCustomView @JvmOverloads constructor(
         val squareWidth = width.toFloat() / paletteColors.size
 
         paletteColors.forEach {
+
+            // Draw each color of palette
             squarePaint.color = it
             canvas.drawRect(
                 currentPos,
@@ -58,6 +69,18 @@ class PaletteCustomView @JvmOverloads constructor(
                 currentPos + squareWidth,
                 0f,
                 squarePaint)
+
+            // Draw border around selected color
+            if(selectedColor == it) {
+                borderPaint.color = borderColor
+                val strokeWidth = 10f
+                borderPaint.strokeWidth = strokeWidth
+                canvas.drawRect(currentPos + strokeWidth/2,
+                    height.toFloat() - strokeWidth/2,
+                    currentPos + squareWidth - strokeWidth/2,
+                    0f + strokeWidth/2,
+                    borderPaint)
+            }
             currentPos += squareWidth
         }
     }
@@ -66,15 +89,24 @@ class PaletteCustomView @JvmOverloads constructor(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val measuredWidth = resolveSize(widthMeasureSpec, widthMeasureSpec)
         val measuredHeight = measuredWidth / paletteColors.size
-
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
     override fun performClick(): Boolean {
-        return super.performClick()
-    }
+        selectedColor = paletteColors[Random.nextInt(0, paletteColors.size)]
+        invalidate()
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return super.onTouchEvent(event)
+        super.performClick()
+        return true
     }
+//
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//        setCurrentColor(x, y)
+//        performClick()
+//            return super.onTouchEvent(event)
+//    }
+//
+//    private fun setCurrentColor(x: Float, y: Float) {
+//
+//    }
 }

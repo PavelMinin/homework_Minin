@@ -10,5 +10,6 @@
         <attr name="paletteColor7" format="color" />
         <attr name="paletteColor8" format="color" />
         <attr name="selectedBorderColor" format="color" />
+        <attr name="defaultIconColor" format="color" />
     </declare-styleable>
 </resources>
