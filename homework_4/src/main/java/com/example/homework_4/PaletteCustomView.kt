@@ -3,9 +3,9 @@ package com.example.homework_4
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.View
-import kotlin.random.Random
 
 class PaletteCustomView @JvmOverloads constructor(
     context: Context,
@@ -13,7 +13,7 @@ class PaletteCustomView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-
+    val clickPosition: PointF = PointF(-1.0f, -1.0f)
 
     private val squarePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -21,6 +21,8 @@ class PaletteCustomView @JvmOverloads constructor(
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
+
+    private val colorStartPos = mutableMapOf<Int, Float>()
 
     private val paletteColors: List<Int>
 
@@ -35,20 +37,20 @@ class PaletteCustomView @JvmOverloads constructor(
 
         isClickable = true
 
-        val typedArray = context.obtainStyledAttributes(attrs,R.styleable.PaletteCustomViewView)
+        val typedArray = context.obtainStyledAttributes(attrs,R.styleable.PaletteCustomView)
 
         paletteColors = listOf(
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor1, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor2, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor3, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor4, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor5, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor6, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor7, 0),
-            typedArray.getColor(R.styleable.PaletteCustomViewView_paletteColor8, 0)
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor1, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor2, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor3, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor4, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor5, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor6, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor7, 0),
+            typedArray.getColor(R.styleable.PaletteCustomView_paletteColor8, 0)
         )
         borderColor = typedArray.getColor(
-            R.styleable.PaletteCustomViewView_selectedBorderColor, 0)
+            R.styleable.PaletteCustomView_selectedBorderColor, 0)
 
         typedArray.recycle()
     }
@@ -60,6 +62,11 @@ class PaletteCustomView @JvmOverloads constructor(
         val squareWidth = width.toFloat() / paletteColors.size
 
         paletteColors.forEach {
+             if(currentPos <= clickPosition.x && clickPosition.x < currentPos + squareWidth) {
+                 selectedColor = it
+             }
+
+            colorStartPos[it] = currentPos
 
             // Draw each color of palette
             squarePaint.color = it
@@ -70,7 +77,6 @@ class PaletteCustomView @JvmOverloads constructor(
                 0f,
                 squarePaint)
 
-            // Draw border around selected color
             if(selectedColor == it) {
                 borderPaint.color = borderColor
                 val strokeWidth = 10f
@@ -81,6 +87,7 @@ class PaletteCustomView @JvmOverloads constructor(
                     0f + strokeWidth/2,
                     borderPaint)
             }
+
             currentPos += squareWidth
         }
     }
@@ -93,20 +100,17 @@ class PaletteCustomView @JvmOverloads constructor(
     }
 
     override fun performClick(): Boolean {
-        selectedColor = paletteColors[Random.nextInt(0, paletteColors.size)]
-        invalidate()
-
         super.performClick()
+
+        invalidate()
         return true
     }
-//
-//    override fun onTouchEvent(event: MotionEvent): Boolean {
-//        setCurrentColor(x, y)
-//        performClick()
-//            return super.onTouchEvent(event)
-//    }
-//
-//    private fun setCurrentColor(x: Float, y: Float) {
-//
-//    }
+
+    fun selectColor(x: Float, y: Float) {
+        colorStartPos.forEach { color, posX ->
+            if(posX <= x && x < (posX + width.toFloat() / paletteColors.size)) {
+                selectedColor = color
+            }
+        }
+    }
 }

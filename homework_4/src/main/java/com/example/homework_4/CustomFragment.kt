@@ -1,8 +1,11 @@
 package com.example.homework_4
 
 import android.graphics.Color
+import android.graphics.PointF
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -28,7 +31,10 @@ class CustomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         with(binding) {
+
+            // Changing color of the icon
             paletteCustomView.setOnClickListener {
                 val imageColor = paletteCustomView.paletteSelectedColor
                 if(imageColor != null) {
@@ -40,7 +46,24 @@ class CustomFragment : Fragment() {
                 }
                 adbIcon300.invalidate()
             }
+
+            paletteCustomView.setOnTouchListener { view, motionEvent ->
+                val x = motionEvent.x
+                val y = motionEvent.y
+                when(motionEvent.action) {
+                    MotionEvent.ACTION_UP -> {
+                        paletteCustomView.clickPosition.x = x
+                        paletteCustomView.clickPosition.y = y
+                        Log.i("Click", "x: $x, y: $y")
+                        paletteCustomView.selectColor(x, y)
+                        view.performClick()
+                    }
+                    else -> { false}
+                }
+            }
         }
+
+
     }
 
     override fun onDestroyView() {

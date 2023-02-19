@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="PaletteCustomViewView">
+    <declare-styleable name="PaletteCustomView">
         <attr name="paletteColor1" format="color" />
         <attr name="paletteColor2" format="color" />
         <attr name="paletteColor3" format="color" />
