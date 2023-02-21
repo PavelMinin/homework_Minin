@@ -2,10 +2,11 @@ package com.example.homework_4
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.View
+import kotlin.random.Random
 
 class PaletteCustomView @JvmOverloads constructor(
     context: Context,
@@ -13,7 +14,10 @@ class PaletteCustomView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    val clickPosition: PointF = PointF(-1.0f, -1.0f)
+    val paletteSelectedColor: Int?
+        get() = selectedColor
+
+    val defaultIconColor: Int?
 
     private val squarePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -24,14 +28,12 @@ class PaletteCustomView @JvmOverloads constructor(
 
     private val colorStartPos = mutableMapOf<Int, Float>()
 
-    private val paletteColors: List<Int>
+    private val paletteColors: MutableList<Int>
 
     private val borderColor: Int
 
     private var selectedColor: Int? = null
 
-    val paletteSelectedColor: Int?
-        get() = selectedColor
 
     init {
 
@@ -39,7 +41,7 @@ class PaletteCustomView @JvmOverloads constructor(
 
         val typedArray = context.obtainStyledAttributes(attrs,R.styleable.PaletteCustomView)
 
-        paletteColors = listOf(
+        paletteColors = mutableListOf(
             typedArray.getColor(R.styleable.PaletteCustomView_paletteColor1, 0),
             typedArray.getColor(R.styleable.PaletteCustomView_paletteColor2, 0),
             typedArray.getColor(R.styleable.PaletteCustomView_paletteColor3, 0),
@@ -52,6 +54,9 @@ class PaletteCustomView @JvmOverloads constructor(
         borderColor = typedArray.getColor(
             R.styleable.PaletteCustomView_selectedBorderColor, 0)
 
+        defaultIconColor = typedArray.getColor(
+            R.styleable.PaletteCustomView_selectedBorderColor, 0)
+
         typedArray.recycle()
     }
 
@@ -62,9 +67,6 @@ class PaletteCustomView @JvmOverloads constructor(
         val squareWidth = width.toFloat() / paletteColors.size
 
         paletteColors.forEach {
-             if(currentPos <= clickPosition.x && clickPosition.x < currentPos + squareWidth) {
-                 selectedColor = it
-             }
 
             colorStartPos[it] = currentPos
 
@@ -79,7 +81,7 @@ class PaletteCustomView @JvmOverloads constructor(
 
             if(selectedColor == it) {
                 borderPaint.color = borderColor
-                val strokeWidth = 10f
+                val strokeWidth = resources.getDimension(R.dimen.border_thickness)
                 borderPaint.strokeWidth = strokeWidth
                 canvas.drawRect(currentPos + strokeWidth/2,
                     height.toFloat() - strokeWidth/2,
@@ -94,8 +96,12 @@ class PaletteCustomView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
         val measuredWidth = resolveSize(widthMeasureSpec, widthMeasureSpec)
-        val measuredHeight = measuredWidth / paletteColors.size
+        // The minimum height of the palette is set in res/values/dimens in dp
+        val minHeight = resources.getDimension(R.dimen.min_height).toInt()
+        var measuredHeight = measuredWidth / paletteColors.size
+        if(measuredHeight < minHeight) measuredHeight = minHeight
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
@@ -107,10 +113,24 @@ class PaletteCustomView @JvmOverloads constructor(
     }
 
     fun selectColor(x: Float, y: Float) {
-        colorStartPos.forEach { color, posX ->
+        colorStartPos.forEach { (color, posX) ->
             if(posX <= x && x < (posX + width.toFloat() / paletteColors.size)) {
                 selectedColor = color
             }
         }
+    }
+
+    fun setColors(colors: List<Int>) {
+        paletteColors.clear()
+        paletteColors.addAll(colors)
+    }
+
+    fun setRandomColors(colorsQty: Int) {
+        val randomColors = MutableList(colorsQty) {
+            Random.nextInt(Color.parseColor("#000000"),
+                Color.parseColor("#FFFFFF"))
+        }
+        paletteColors.clear()
+        paletteColors.addAll(randomColors)
     }
 }
