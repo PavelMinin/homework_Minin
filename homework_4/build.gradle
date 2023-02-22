@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.homework'
+    namespace 'com.example.homework_4'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.homework"
+        applicationId "com.example.homework_4"
         minSdk 29
         targetSdk 33
         versionCode 1

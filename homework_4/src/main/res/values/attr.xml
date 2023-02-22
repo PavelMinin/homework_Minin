@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PaletteCustomView">
+        <attr name="paletteColor1" format="color" />
+        <attr name="paletteColor2" format="color" />
+        <attr name="paletteColor3" format="color" />
+        <attr name="paletteColor4" format="color" />
+        <attr name="paletteColor5" format="color" />
+        <attr name="paletteColor6" format="color" />
+        <attr name="paletteColor7" format="color" />
+        <attr name="paletteColor8" format="color" />
+        <attr name="selectedBorderColor" format="color" />
+        <attr name="defaultIconColor" format="color" />
+    </declare-styleable>
+</resources>
