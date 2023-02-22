@@ -63,21 +63,20 @@ class CustomFragment : Fragment() {
                 adbIcon300.invalidate()
             }
 
+            // Determination of touch coordinates
             paletteCustomView.setOnTouchListener { view, motionEvent ->
                 val x = motionEvent.x
                 val y = motionEvent.y
                 when(motionEvent.action) {
                     MotionEvent.ACTION_UP -> { // Send coordinates of ending of touch (finger up)
                         Log.i("Click", "x: $x, y: $y")
-                        paletteCustomView.selectColor(x, y)
+                        paletteCustomView.selectColor(x)
                         view.performClick()
                     }
                     else -> { false}
                 }
             }
         }
-
-
     }
 
     override fun onDestroyView() {

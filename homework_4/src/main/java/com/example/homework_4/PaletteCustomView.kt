@@ -39,7 +39,7 @@ class PaletteCustomView @JvmOverloads constructor(
 
         isClickable = true
 
-        val typedArray = context.obtainStyledAttributes(attrs,R.styleable.PaletteCustomView)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PaletteCustomView)
 
         paletteColors = mutableListOf(
             typedArray.getColor(R.styleable.PaletteCustomView_paletteColor1, 0),
@@ -70,7 +70,7 @@ class PaletteCustomView @JvmOverloads constructor(
 
             colorStartPos[it] = currentPos
 
-            // Draw each color of palette
+            // Draw each color of the palette
             squarePaint.color = it
             canvas.drawRect(
                 currentPos,
@@ -79,6 +79,7 @@ class PaletteCustomView @JvmOverloads constructor(
                 0f,
                 squarePaint)
 
+            // Draw a border around the selected color
             if(selectedColor == it) {
                 borderPaint.color = borderColor
                 val strokeWidth = resources.getDimension(R.dimen.border_thickness)
@@ -107,12 +108,11 @@ class PaletteCustomView @JvmOverloads constructor(
 
     override fun performClick(): Boolean {
         super.performClick()
-
         invalidate()
         return true
     }
 
-    fun selectColor(x: Float, y: Float) {
+    fun selectColor(x: Float) {
         colorStartPos.forEach { (color, posX) ->
             if(posX <= x && x < (posX + width.toFloat() / paletteColors.size)) {
                 selectedColor = color
